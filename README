@@ -16,7 +16,10 @@ Simple Installation Instructions
 2)  install
     source setup.sh
 
-3)  Run directory is in MyDaq/run
+3)  load environment variable XXUSBDIR
+    echo env.sh (from run directory)
+
+4)  Run directory is in MyDaq/run
     cd MyDaq/run
 
 ------------------------------------------------------
