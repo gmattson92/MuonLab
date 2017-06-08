@@ -20,6 +20,7 @@ library:
 	$(CXX) $(CXXFLAGS) $(INCLUDEDIRS) -c $(SOURCES)
 	$(LD)  $(LDFLAGS) $(LDLIBS) $(INCLUDEDIRS) $(OBJECTS) -o $(LIB)  
 	@chmod 755 $(LIB)
+	[ -d ./../lib ] || mkdir ./../lib 	
 	cp $(LIB) ./../lib
 	@echo "Done"
 
