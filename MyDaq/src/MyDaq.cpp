@@ -217,7 +217,7 @@ int MyDaq :: PrepareAndLoadStack(){
 
   if( nStackCommands != nReadStackCommands ||
       (nBytesSent - 2 - nBytesRecieved) != 0 ){
-    std::cerr << "Something wrong with stack " << std::cerr;
+    std::cerr << "Something wrong with stack " << std::endl;
     return 0;
   }
 
