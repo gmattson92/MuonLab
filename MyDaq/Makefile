@@ -38,4 +38,4 @@ $(SOURCEDIR)MyMainFrameDict.cpp: $(SOURCEDIR)MyMainFrame.cpp $(INCLUDEDIR)MyMain
 	cp $(SOURCEDIR)MyMainFrameDict* $(RUNDIR)
 
 clean:
-	$(RM) $(RUNDIR)  $(SOURCEDIR)MyMainFrameDict*
+	$(RM) $(RUNDIR)MyMainFrameDict* $(RUNDIR)$(OBJ)  $(SOURCEDIR)MyMainFrameDict*
