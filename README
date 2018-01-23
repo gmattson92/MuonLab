@@ -110,3 +110,6 @@ Device not xxusb
 	     Alternatively, contact IT support and explain to them 
 	     the USB udev rules are incorrect somehow.
 
+3) If during setup you get something about usb.h not found. You probably dont have libusb-devel
+	     sudo yum install libusb*
+
