@@ -10,7 +10,7 @@ int main (int argc,  char *argv[])
   MyDaq* daq = new MyDaq();
   
   // Add  ADC module with 12 channels to slot 1. Has 10 bit output
-  daq->AddModule( new GenericModule(   "ADC", 12, 1, 2, 1024) );
+  daq->AddModule( new GenericModule(  "ADC", 12, 1, 2, 1024) );
   // Add  ADC module with 12 channels to slot 2. Has 10 bit output
   daq->AddModule( new GenericModule(  "ADC", 12, 2, 2, 1024) );
   // Add STDC module with 16 channels to slot 8. Has 12 bit output
