@@ -1,0 +1,163 @@
+********************************************************************************
+*****                       Basic Step-By-Step Setup                       *****
+********************************************************************************
+
+1. Cover basic physics of cosmic ray muons and their decays, the scintillators
+  and PMTs, and describe the idea behind the trigger logic. Coincidence of
+  top layers, veto on bottom layers. Describe TDCs and ADCs and what the data
+  collected by the DAQ will look like.
+
+1. Before removing all electronics wiring, have students trace a few cables from
+  the PMT signal cables as far as the first few AND gates or the Quad 4-Fold 
+  Logic unit. Check that they understand how to translate the circuit diagram
+  to the physical cables and logic units. Plug a PMT signal and corresponding
+  discriminator output into the oscilloscope to show the students. Briefly
+  explain how the scope works and how to use it to view pulses.
+	- Note -- the pulse timing is on the order of 10ns. Trigger level
+		  can be set to around -100 or -200mV. PMT pulses have
+		  amplitude ~300mV, discriminator signals ~750mV. PMT signals
+		  will be tuned later so don't worry if the amplitude is
+		  (potentially significantly) different.
+
+2. Remove all wiring on the front face of the experiment. Recommended to leave
+  the entire back half alone, because the splitters can be very finicky.
+
+3. Test each scintillator panel for light-tightness. Turn on HV to each PMT
+  one at a time and check if it produces a signal at a "low" voltage, i.e. 
+  below ~1500V. A light leak should produce a signal around as low as 1200V.
+  Signal can be checked either on the scope, or using the scaler (in which case
+  signal must be discriminated first).
+
+4. Rebuild the logic electronics. Test each component as it is connected, e.g.
+  test AND gates by selectively turning on HV to each PMT and verify the gate
+  gives the correct output. For the Quad 4-Fold Logic units, the coincidence
+  level can be set to 1, 2, 3, or 4 coincident inputs using a screw. If using
+  one of these units as an extra AND or OR gate, make sure the coincidence
+  level is set correctly.
+
+5. Tune the variable delays for 1E1W, 2E2W, and 3OR4 so that their
+  discriminated pulses line up at nearly the same time, and within the gate
+  determined by the 13OR14 veto pulse. Use all 4 channels on the scope to
+  view all 4 pulses together.
+
+6. Tune the PMT HV. The lab manual suggests doing this by using the DAQ and
+  checking the ADC distribution, fitting to a Landau, and adjusting the voltage
+  so each PMT has its peak near the same ADC channel, e.g. channel 300. In
+  theory all the discriminator thresholds can then be set to the same value.
+  In practice this approach does *not* work! The problem is the splitters don't
+  all divide the signals in the same way. So even if all the PMT pulses reaching
+  the ADC have the same amplitude, the pulses reaching the trigger logic will
+  not.
+
+   Instead use the scaler to calibrate the PMT voltages. Begin with the 
+  discriminator thresholds set to approximately the same value -- we used 20mV.
+  For each channel, adjust the voltage so the scaler counts approximately the 
+  expected rate for cosmic ray muons, i.e. ~50/s for the large scintillators
+  (1,2,13,14) and 25/s for the stack. Measure the rate by setting a timer for 
+  e.g. 30 seconds. The PMTs have some maximum operating voltage -- update here
+  if you can find this -- but we have used 1900V for the large panels and 
+  1800V for the stack. If the scaler rate is still too low at this maximum
+  voltage, adjust the discriminator threshold instead.
+	- Note -- some of the discriminators will give a threshold reading on
+		  the multimeter of 10x the true threshold. E.g. 200mV read
+		  on the multimeter corresponds to a 20mV threshold.
+
+7. Start the DAQ and verify you collect data from each ADC and TDC channel. The
+  initial goal should be to collect some lifetime data from the TDCs. Some
+  notes on the data:
+	- ADC data will contain a huge peak at a low value -- not sure what
+	  causes this... Also, the location of the peak varies between ADC
+	  channels.
+	- (S)TDC data will contain a huge number of entries with value 1 -- not
+	  sure what causes this either.
+	- In both cases you need to cut out these low values. The remaining ADC
+	  distribution should be a Landau, the TDC should be exponential.
+	- STDC_8_SUM contains all the events collected by any of the various
+	  TDC channels -- use this for the lifetime measurement.
+  The TDC data can be fit to an exponential; the "slope" parameter gives the
+  reciprocal of the lifetime.
+
+8. For analyzing the data the students found it helpful to use PYROOT,
+  particularly in a Jupyter notebook (Jupyroot). This can be done on Google
+  Colab so students do not need to install any software, plus the notebook
+  can be shared. 
+	- TO DO: document how to set up the Colab notebook / where to find
+	  a template
+
+This is where the first group finished in Spring 2023.
+
+
+9. The next goal should be measuring the lifetime in different materials and
+  separating the contributions from positive and negative muon decays. Plates of
+  different materials (Al, Pb, Cu, C (graphite), plastic polymer?) can be placed
+  between the scintillator panels in the central stack.
+
+Extra note: in Spring 2023 the second group attempted to re-tune the PMT
+voltages using the ADC distribution method. We did this by disconnecting the
+stack PMT signals from the trigger logic/discriminators and plugging them
+directly into the ADC inputs. Obviously the split signals which originally went
+to the ADCs were unplugged. To make sure having these cables unterminated did
+not change the signals on the other side of the splitters, I took two extra ADC
+boards from the hallway cabinet and inserted them into the CAMAC crate, then
+plugged the "original" ADC cables into these. The DAQ looks for the ADCs and
+TDCs in specific slots in the CAMAC so it does not see these extra dummy boards.
+They are there just to terminate the "original" ADC cables.
+
+Update -- the ADC data we got from this does not look right. The ADC responses
+are much narrower than they should be and drop off very steeply -- not Landau
+distributions as expected. The data is saved in 
+/opt/MuonLab/MyDaq/run/adc_benchmark_9Feb2023.root. The problem might have been
+with the ADC signals not being in sync with the gate?
+
+
+
+
+
+
+Steps for installing/running the DAQ:
+1. Clone the repository:
+    $ git clone git@github.com/YakovKulinich/MuonLab.git
+
+2. Install:
+    $ cd MuonLab
+    $ source setup.sh
+	If there is an error about libxxusb.so not being found, check that
+        XXUSBDIR points to MuonLab/xxusb_3.22 and add MuonLab/xxusb3.22/lib
+	to LD_LIBRARY_PATH:
+	    $ export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$XXUSBDIR/lib"
+	Then make again:
+	    $ source setup.sh
+
+3. Run the program:
+    $ cd MuonLab/MyDaq/run
+    $ ./runMyDaq
+	A ROOT graph should appear with a text box and start/stop buttons at the
+	bottom. First enter a name in the text box to use for the output file
+	(defaults to "output.root"), then click start. Click stop when finished.
+
+4. Troubleshooting:
+    First check the README file, MuonLab/README
+    The most common problem we had was 
+	Finding XX_USB devices and opening first one found
+	Device not xxusb
+    This means something is wrong with the udev configuration. To fix it:
+	$ sudo udevadm control --reload-rules
+	$ udevadm trigger
+    Then rerun ./runMyDaq. If it still does not work, try the above udevadm
+    commands again. Sometimes it works after being repeated.
+    If ./runMyDaq still gives the same error, you may need to update the udev
+    rules. To do this, create a new text file with the following contents:
+
+	SUBSYSTEM=="usb", ATTRSidVendor=="16dc", MODE:="0666"
+
+    and add a copy of it under both /etc/udev/rules.d and /lib/udev/rules.d.
+    I did this in January 2022 -- the files are 
+	/etc/udev/rules.d/51-xxusb.rules
+	/lib/udev/rules.d/51-xxusb.rules
+    These files are used to generate the udev configuration which is refreshed
+    by the above udevadm commands. Hopefully they will persist, but if
+    Engineering IT cleans them at some point it may be necessary to recreate
+    them.
+
+    The README file has these instructions, plus some other possible error
+    cases.

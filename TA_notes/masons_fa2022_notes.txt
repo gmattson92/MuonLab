@@ -1,0 +1,45 @@
+in order to compile and run the DAQ software, you must have the correct versions of gcc and root loaded:
+
+$ module load root/6.02.08
+$ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/masonrh2/soft/cheat_libs
+$ module swap gcc openmpi/4.0.1-gcc4.8.5
+
+I have these commands in my .bashrc, but hopefully one day we will have a students account
+if that day comes, and if we are still using this outdated software, we should put these commands
+in that account's .bashrc
+
+if the computer are restarted, you will probably also need fix the usb
+in that case, do
+$ source /home/masonrh2/Desktop/fix_ubs.sh
+NOTE THIS REQUIRES SUDO ACCESS
+
+troubleshooting:
+check the versions of gcc and root
+$ which root
+should give version 6.02.08
+$ gcc -v
+should give version 4.8.5
+if they are the wrong version and you already tried "module load ...", you can try:
+$ module swap root root/6.02.08
+or 
+$ module swap gcc openmpi/4.0.1-gcc4.8.5
+for some reason the module may clear itself or revert to another version and I'm not sure why
+if you can't get the versions right, try loading them in a different order
+
+note that the file in /home/masonrh2/soft/cheat_libs is simply a soft link to /usr/lib64/libpcre.so
+you can make such links with:
+$ sudo ln -s /path/to/file /path/to/new/link/to/that/file
+a link is like a shortcut and tricks the compiler into thinking we actually have libpcre.so.0
+
+STARTING HV:
+1) turn on hv crate
+2) double click labview shortcut on desktop of leftmost computer
+3) change IP adress to the correct one (see sticky note on computer second from the left)
+4) click "enter text" at the top left (hitting enter key after typing IP does NOT work)
+5) click run at the top left
+6) click main power button
+
+USEFUL COMMANDS:
+
+$ ldconfig -p | grep mylibrary
+finds where mylibrary is hiding
